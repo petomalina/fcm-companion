@@ -1,0 +1,169 @@
+syntax = "proto3";
+
+package fcmcompanion.v1;
+
+option go_package = "github.com/petomalina/fcm-companion/apis/go-sdk/notification/v1";
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/any.proto";
+import "validate/validate.proto";
+
+service NotificationService {
+  // PutInstance either adds or patches a unique instance_id within the system with the
+  // provided token, ref, and labels.
+  // In case of patch, only fields present in the request will be rewritten.
+  // Labels are rewritten if present - send the full map in case of patching.
+  rpc PutInstance(AppInstance) returns (google.protobuf.Empty) {}
+
+  // RemoveToken removes the token from an existing instance in the system.
+  // This disables all notifications sent to the user and will result in warnings in logs.
+  // The instance token can be re-registered using PutInstance
+  rpc RemoveToken(RemoveTokenRequest) returns (google.protobuf.Empty) {}
+
+  // RemoveInstance removes the whole instance from the system. Use this in case the application
+  // deleted the previous instance. This method is also usable if you want to force-remove the instance
+  // from your system (e.g. during account deletion)
+  // see https://firebase.google.com/docs/reference/android/com/google/firebase/iid/FirebaseInstanceId#deleteInstanceId()
+  rpc RemoveInstance(RemoveInstanceRequest) returns (google.protobuf.Empty) {}
+
+  // Send sends a single notification with its data either to a token, topic, or a condition (e.g. more topics)
+  // see https://pkg.go.dev/firebase.google.com/go/messaging#Client.Send
+  rpc Send(SendRequest) returns (google.protobuf.Empty) {}
+
+  // SendAll sends multiple notificaitons to different defined tokens, topics, or conditions
+  // see https://pkg.go.dev/firebase.google.com/go/messaging#Client.SendAll
+  rpc SendAll(SendAllRequest) returns (google.protobuf.Empty) {}
+
+  // SendMulticast sends the same notification to multiple token targets
+  // see https://pkg.go.dev/firebase.google.com/go/messaging#Client.SendMulticast
+  rpc SendMulticast(SendMulticastRequest) returns (google.protobuf.Empty) {}
+
+  // ListNotifications returns list of notifications with a paging token
+  rpc ListNotifications(ListNotificationsRequest) returns (NotificationList) {}
+}
+
+message AppInstance {
+  // instance_id is a unique identifier for the user application that's stable.
+  // see https://firebase.google.com/docs/reference/android/com/google/firebase/iid/FirebaseInstanceId#getId()
+  string instance_id = 1 [(validate.rules).string.min_len = 8];
+
+  // token is an ephemeral token that is being rotated by Firebase. This field may
+  // differ in time for the same instance_id.
+  // see https://firebase.google.com/docs/cloud-messaging/android/client#sample-register
+  string token = 2;
+
+  // ref is a consumer-defined id used querying the tokens and sending notifications
+  // to a specific user or a group of users.
+  // Usage:
+  //  - use this field to store the unique user ID
+  //  - for anonymous users, generate their unique ID from Firebase
+  string ref = 3;
+
+  // labels is a map used for querying using the equality operator. Use this field
+  // to group users or add metadata when needed.
+  map<string, string> labels = 4;
+}
+
+message RemoveTokenRequest {
+  // instance_id is the unique identifier used to identify devices
+  string instance_id = 1;
+}
+
+message RemoveInstanceRequest {
+  // instance_id is the unique identifier used to identify devices
+  string instance_id = 1;
+}
+
+message SendRequest {
+  Message message = 1;
+}
+
+message SendAllRequest {
+  repeated Message messages = 2;
+}
+
+message SendMulticastRequest {
+  MulticastMessage message = 1;
+}
+
+message Message {
+  string template_id = 1;
+
+  // templateData is used to replace dynamic values inside the
+  // FCM message configuration
+  map<string, string> templateData = 2;
+
+  // data is the list to be sent along the notification
+  map<string, string> data = 3;
+
+  // the message must specify exactly one of token, topic, or condition
+  // see https://pkg.go.dev/firebase.google.com/go/messaging#Client.Send
+  string token = 4;
+  string topic = 5;
+  string condition = 6;
+}
+
+message MulticastMessage {
+  string template_id = 1;
+
+  // templateData is used to replace dynamic values inside the
+  // FCM message configuration
+  map<string, string> templateData = 2;
+
+  // data is the list to be sent along the notification
+  map<string, string> data = 3;
+
+  // tokens is a list of tokens the message should be sent to
+  repeated string tokens = 4;
+}
+
+// ListNotificationsRequest defines a message that returns notifications
+// already sent in a descending list
+message ListNotificationsRequest {
+  // the filter accepts parameters using the following rule:
+  // 1) if 'instance_id' is set, use this parameter
+  // 2) if 'token' is set, use this parameter
+  // 3) if 'ref' is set, use this parameter
+  // -- parameters 1-3 are always uniquely identifying the objects
+  // 4) use labels map with the AND semantic
+  AppInstance filter = 1;
+  int32 page_size = 10;
+  string page_token = 11;
+}
+
+message NotificationList {
+  repeated Notification notifications = 1;
+  string next_page_token = 2;
+}
+
+// Notification is message generated by the system for a specific user
+message Notification {
+  AppInstance instance = 1;
+  map<string, string> data = 2;
+
+  // message is the object containing the configuration of an FCM message
+  // see https://pkg.go.dev/firebase.google.com/go/messaging#Message
+  // this object is already populated from the template and corresponds to
+  // what was sent to the FCM API
+  google.protobuf.Any message = 3;
+}
+
+/* ----- Region for Configuration ----- */
+
+// NotificationConfig is the object of a configuration file parsed from the
+// remote config. It contains all message templates
+message NotificationConfig {
+  repeated MessageTemplate messages = 1;
+}
+
+message MessageTemplate {
+  // id is a unique key under which the template is referenced
+  // this field is other referenced as 'instance_id'
+  string id = 1;
+
+  // message is the object containing the configuration of an FCM message
+  // see https://pkg.go.dev/firebase.google.com/go/messaging#Message
+  // this object will be parsed from the configuration file directly into the
+  // FCM message specification
+  google.protobuf.Any message = 2;
+}
