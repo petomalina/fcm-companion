@@ -19,7 +19,7 @@ help:
 ##   \e[34mgen\e[0m
 ##       Shortcut for generate
 gen:
-	make generate SERVICE_NAME=notification
+	make generate SERVICE_NAME=notification SERVICE_VERSION=v1
 
 ##   \e[34mgenerate\e[0m
 ##       Generates Go
@@ -29,14 +29,9 @@ generate: generate/go
 ##       Generates go grpc files and messages from proto file
 generate/go:
 	protoc $(PROTO_INCLUDES) \
-		  proto/v1/${SERVICE_NAME}.proto \
+		  proto/${SERVICE_VERSION}/${SERVICE_NAME}.proto \
 		   --go_out=$(PROTO_GRPC_ARGS):go-sdk/${SERVICE_NAME} \
 		   --go-grpc_out=$(PROTO_GRPC_ARGS):go-sdk/${SERVICE_NAME} \
 		   --validate_out="lang=go,$(PROTO_GRPC_ARGS):go-sdk/${SERVICE_NAME}"
 
-##   \e[34mgenerate/ngx\e[0m
-##       Generates ngx files from proto file
-generate/ngx:
-	protoc $(PROTO_INCLUDES) \
-		  proto/v1/${SERVICE_NAME}.proto \
-		   --plugin=protoc-gen-ng=../ui/node_modules/.bin/protoc-gen-ng --ng_out=worker=true:../ui/src/proto
+	protoc-go-inject-tag -input=./go-sdk/${SERVICE_NAME}/${SERVICE_VERSION}/${SERVICE_NAME}.pb.go

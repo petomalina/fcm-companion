@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	firebase "firebase.google.com/go/v4"
 	"github.com/blendle/zapdriver"
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"github.com/petomalina/fcm-companion/apis/go-sdk/notification/v1"
@@ -31,9 +32,28 @@ func main() {
 		panic(err)
 	}
 
+	firebaseApp, err := firebase.NewApp(context.Background(), nil)
+	if err != nil {
+		logger.Fatal("An error occurred when initializing firebase app", zap.Error(err))
+	}
+
+	firestoreClient, err := firebaseApp.Firestore(ctx)
+	if err != nil {
+		logger.Fatal("An error occurred when initializing firestore", zap.Error(err))
+	}
+
+	messagingClient, err := firebaseApp.Messaging(ctx)
+	if err != nil {
+		logger.Fatal("An error occurred when initializing firebase messaging", zap.Error(err))
+	}
+
 	// create and register the grpc server
 	grpcServer := grpc.NewServer()
-	notificationSvc := &notification.Service{Logger: logger}
+	notificationSvc := &notification.Service{
+		Logger:          logger,
+		FirestoreClient: firestoreClient,
+		MessagingClient: messagingClient,
+	}
 	v1.RegisterNotificationServiceServer(grpcServer, notificationSvc)
 	reflection.Register(grpcServer)
 

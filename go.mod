@@ -3,8 +3,9 @@ module github.com/petomalina/fcm-companion
 go 1.15
 
 require (
-	cloud.google.com/go/firestore v1.3.0 // indirect
+	cloud.google.com/go/firestore v1.3.0
 	firebase.google.com/go v3.13.0+incompatible // indirect
+	firebase.google.com/go/v4 v4.0.0
 	github.com/envoyproxy/protoc-gen-validate v0.4.1
 	github.com/golang/protobuf v1.4.2
 	github.com/petomalina/xrpc v0.0.0-20200930124919-42e94f36cba5 // indirect

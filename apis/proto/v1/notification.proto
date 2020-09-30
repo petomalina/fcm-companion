@@ -45,11 +45,13 @@ service NotificationService {
 message AppInstance {
   // instance_id is a unique identifier for the user application that's stable.
   // see https://firebase.google.com/docs/reference/android/com/google/firebase/iid/FirebaseInstanceId#getId()
+  // @inject_tag: firestore:"instanceID,omitempty"
   string instance_id = 1 [(validate.rules).string.min_len = 8];
 
   // token is an ephemeral token that is being rotated by Firebase. This field may
   // differ in time for the same instance_id.
   // see https://firebase.google.com/docs/cloud-messaging/android/client#sample-register
+  // @inject_tag: firestore:"token,omitempty"
   string token = 2;
 
   // ref is a consumer-defined id used querying the tokens and sending notifications
@@ -57,10 +59,12 @@ message AppInstance {
   // Usage:
   //  - use this field to store the unique user ID
   //  - for anonymous users, generate their unique ID from Firebase
+  // @inject_tag: firestore:"ref,omitempty"
   string ref = 3;
 
   // labels is a map used for querying using the equality operator. Use this field
   // to group users or add metadata when needed.
+  // @inject_tag: firestore:"labels,omitempty"
   map<string, string> labels = 4;
 }
 

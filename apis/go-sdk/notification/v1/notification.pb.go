@@ -35,20 +35,24 @@ type AppInstance struct {
 
 	// instance_id is a unique identifier for the user application that's stable.
 	// see https://firebase.google.com/docs/reference/android/com/google/firebase/iid/FirebaseInstanceId#getId()
-	InstanceId string `protobuf:"bytes,1,opt,name=instance_id,json=instanceId,proto3" json:"instance_id,omitempty"`
+	// @inject_tag: firestore:"instanceID,omitempty"
+	InstanceId string `protobuf:"bytes,1,opt,name=instance_id,json=instanceId,proto3" json:"instance_id,omitempty" firestore:"instanceID,omitempty"`
 	// token is an ephemeral token that is being rotated by Firebase. This field may
 	// differ in time for the same instance_id.
 	// see https://firebase.google.com/docs/cloud-messaging/android/client#sample-register
-	Token string `protobuf:"bytes,2,opt,name=token,proto3" json:"token,omitempty"`
+	// @inject_tag: firestore:"token,omitempty"
+	Token string `protobuf:"bytes,2,opt,name=token,proto3" json:"token,omitempty" firestore:"token,omitempty"`
 	// ref is a consumer-defined id used querying the tokens and sending notifications
 	// to a specific user or a group of users.
 	// Usage:
 	//  - use this field to store the unique user ID
 	//  - for anonymous users, generate their unique ID from Firebase
-	Ref string `protobuf:"bytes,3,opt,name=ref,proto3" json:"ref,omitempty"`
+	// @inject_tag: firestore:"ref,omitempty"
+	Ref string `protobuf:"bytes,3,opt,name=ref,proto3" json:"ref,omitempty" firestore:"ref,omitempty"`
 	// labels is a map used for querying using the equality operator. Use this field
 	// to group users or add metadata when needed.
-	Labels map[string]string `protobuf:"bytes,4,rep,name=labels,proto3" json:"labels,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
+	// @inject_tag: firestore:"labels,omitempty"
+	Labels map[string]string `protobuf:"bytes,4,rep,name=labels,proto3" json:"labels,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3" firestore:"labels,omitempty"`
 }
 
 func (x *AppInstance) Reset() {
