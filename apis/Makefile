@@ -6,7 +6,7 @@
 ##    $ make gen
 SHELL=/bin/bash
 
-PROTO_INCLUDES=-Iproto -I3rdparty -I3rdparty/protoc-gen-validate -I=.
+PROTO_INCLUDES=-Iproto -I3rdparty -I3rdparty/protoc-gen-validate -I3rdparty/api-common-protos -I=.
 PROTO_GRPC_ARGS=paths=source_relative
 PROTO_SWAGGER_ARGS=logtostderr=true,json_names_for_fields=true
 ##

@@ -6,6 +6,7 @@ option go_package = "github.com/petomalina/fcm-companion/apis/go-sdk/notificatio
 
 import "google/protobuf/empty.proto";
 import "google/protobuf/any.proto";
+import "google/api/annotations.proto";
 import "validate/validate.proto";
 
 service NotificationService {
@@ -28,15 +29,33 @@ service NotificationService {
 
   // Send sends a single notification with its data either to a token, topic, or a condition (e.g. more topics)
   // see https://pkg.go.dev/firebase.google.com/go/messaging#Client.Send
-  rpc Send(SendRequest) returns (google.protobuf.Empty) {}
+  // This is a Pub/Sub optimized endpoint
+  rpc Send(SendRequest) returns (google.protobuf.Empty){
+    option (google.api.http) = {
+      post: "/send",
+      body: "*"
+    };
+  }
 
   // SendAll sends multiple notificaitons to different defined tokens, topics, or conditions
   // see https://pkg.go.dev/firebase.google.com/go/messaging#Client.SendAll
-  rpc SendAll(SendAllRequest) returns (google.protobuf.Empty) {}
+  // This is a Pub/Sub optimized endpoint
+  rpc SendAll(SendAllRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/sendAll",
+      body: "*"
+    };
+  }
 
   // SendMulticast sends the same notification to multiple token targets
   // see https://pkg.go.dev/firebase.google.com/go/messaging#Client.SendMulticast
-  rpc SendMulticast(SendMulticastRequest) returns (google.protobuf.Empty) {}
+  // This is a Pub/Sub optimized endpoint
+  rpc SendMulticast(SendMulticastRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/sendMulticast",
+      body: "*"
+    };
+  }
 
   // ListNotifications returns list of notifications with a paging token
   rpc ListNotifications(ListNotificationsRequest) returns (NotificationList) {}

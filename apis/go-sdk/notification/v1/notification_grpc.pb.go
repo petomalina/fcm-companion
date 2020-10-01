@@ -34,12 +34,15 @@ type NotificationServiceClient interface {
 	RemoveInstance(ctx context.Context, in *RemoveInstanceRequest, opts ...grpc.CallOption) (*empty.Empty, error)
 	// Send sends a single notification with its data either to a token, topic, or a condition (e.g. more topics)
 	// see https://pkg.go.dev/firebase.google.com/go/messaging#Client.Send
+	// This is a Pub/Sub optimized endpoint
 	Send(ctx context.Context, in *SendRequest, opts ...grpc.CallOption) (*empty.Empty, error)
 	// SendAll sends multiple notificaitons to different defined tokens, topics, or conditions
 	// see https://pkg.go.dev/firebase.google.com/go/messaging#Client.SendAll
+	// This is a Pub/Sub optimized endpoint
 	SendAll(ctx context.Context, in *SendAllRequest, opts ...grpc.CallOption) (*empty.Empty, error)
 	// SendMulticast sends the same notification to multiple token targets
 	// see https://pkg.go.dev/firebase.google.com/go/messaging#Client.SendMulticast
+	// This is a Pub/Sub optimized endpoint
 	SendMulticast(ctx context.Context, in *SendMulticastRequest, opts ...grpc.CallOption) (*empty.Empty, error)
 	// ListNotifications returns list of notifications with a paging token
 	ListNotifications(ctx context.Context, in *ListNotificationsRequest, opts ...grpc.CallOption) (*NotificationList, error)
@@ -136,12 +139,15 @@ type NotificationServiceServer interface {
 	RemoveInstance(context.Context, *RemoveInstanceRequest) (*empty.Empty, error)
 	// Send sends a single notification with its data either to a token, topic, or a condition (e.g. more topics)
 	// see https://pkg.go.dev/firebase.google.com/go/messaging#Client.Send
+	// This is a Pub/Sub optimized endpoint
 	Send(context.Context, *SendRequest) (*empty.Empty, error)
 	// SendAll sends multiple notificaitons to different defined tokens, topics, or conditions
 	// see https://pkg.go.dev/firebase.google.com/go/messaging#Client.SendAll
+	// This is a Pub/Sub optimized endpoint
 	SendAll(context.Context, *SendAllRequest) (*empty.Empty, error)
 	// SendMulticast sends the same notification to multiple token targets
 	// see https://pkg.go.dev/firebase.google.com/go/messaging#Client.SendMulticast
+	// This is a Pub/Sub optimized endpoint
 	SendMulticast(context.Context, *SendMulticastRequest) (*empty.Empty, error)
 	// ListNotifications returns list of notifications with a paging token
 	ListNotifications(context.Context, *ListNotificationsRequest) (*NotificationList, error)
