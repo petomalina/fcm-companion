@@ -153,6 +153,8 @@ github.com/mwitkow/go-conntrack v0.0.0-20190716064945-2f068394615f/go.mod h1:qRW
 github.com/opentracing/opentracing-go v1.1.0/go.mod h1:UkNAQd3GIcIGf0SeVgPpRdFStlNbqXla1AfSYxPUl2o=
 github.com/petomalina/xrpc v0.0.0-20200930124919-42e94f36cba5 h1:0sQN7TJbEyHGpHGqMQVqoeJlbozE+rMD34Z7wpOc5gE=
 github.com/petomalina/xrpc v0.0.0-20200930124919-42e94f36cba5/go.mod h1:It5q5tpo870uRCDYIX+lo///NLuBRMpXU+5EWQDPzPo=
+github.com/petomalina/xrpc v1.1.0 h1:oTKDdcK9M5uO0jELqxpm6X7si9ElCwL2UpbwxGQLiXg=
+github.com/petomalina/xrpc v1.1.0/go.mod h1:It5q5tpo870uRCDYIX+lo///NLuBRMpXU+5EWQDPzPo=
 github.com/pkg/errors v0.8.1/go.mod h1:bwawxfHBFNV+L2hUp1rHADufV3IMtnDRdf1r5NINEl0=
 github.com/pkg/sftp v1.10.1/go.mod h1:lYOWFsE0bwd1+KfKJaKeuokY15vzFx25BLbzYYoAxZI=
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=

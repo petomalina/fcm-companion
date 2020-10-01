@@ -8,7 +8,7 @@ require (
 	firebase.google.com/go/v4 v4.0.0
 	github.com/envoyproxy/protoc-gen-validate v0.4.1
 	github.com/golang/protobuf v1.4.2
-	github.com/petomalina/xrpc v0.0.0-20200930124919-42e94f36cba5 // indirect
+	github.com/petomalina/xrpc v1.1.0 // indirect
 	go.uber.org/zap v1.16.0
 	golang.org/x/net v0.0.0-20200927032502-5d4f70055728 // indirect
 	golang.org/x/sys v0.0.0-20200929083018-4d22bbb62b3c // indirect
