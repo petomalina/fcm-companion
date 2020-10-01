@@ -1,12 +1,14 @@
-package notification
+package companion
 
 import (
 	"cloud.google.com/go/firestore"
 	"context"
 	"firebase.google.com/go/v4/messaging"
 	"github.com/golang/protobuf/ptypes/empty"
+	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"github.com/petomalina/fcm-companion/apis/go-sdk/notification/v1"
 	"go.uber.org/zap"
+	"google.golang.org/grpc"
 )
 
 const (
@@ -23,6 +25,14 @@ type Service struct {
 	// CollectionPrefix is used to define Firestore collection prefixes.
 	// This is useful when there would be conflict with already existing collections
 	CollectionPrefix string
+}
+
+func (s *Service) Register(server *grpc.Server) {
+	v1.RegisterNotificationServiceServer(server, s)
+}
+
+func (s *Service) RegisterGateway(ctx context.Context, mux *runtime.ServeMux, bind string, opts []grpc.DialOption) error {
+	return v1.RegisterNotificationServiceHandlerFromEndpoint(ctx, mux, bind, opts)
 }
 
 func (s *Service) PutInstance(ctx context.Context, i *v1.AppInstance) (*empty.Empty, error) {

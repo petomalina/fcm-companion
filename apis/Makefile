@@ -32,6 +32,7 @@ generate/go:
 		  proto/${SERVICE_VERSION}/${SERVICE_NAME}.proto \
 		   --go_out=$(PROTO_GRPC_ARGS):go-sdk/${SERVICE_NAME} \
 		   --go-grpc_out=$(PROTO_GRPC_ARGS):go-sdk/${SERVICE_NAME} \
+			--grpc-gateway_out=logtostderr=true,allow_patch_feature=false,paths=source_relative:go-sdk/${SERVICE_NAME} \
 		   --validate_out="lang=go,$(PROTO_GRPC_ARGS):go-sdk/${SERVICE_NAME}"
 
 	protoc-go-inject-tag -input=./go-sdk/${SERVICE_NAME}/${SERVICE_VERSION}/${SERVICE_NAME}.pb.go
