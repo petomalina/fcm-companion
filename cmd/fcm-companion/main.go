@@ -32,7 +32,12 @@ func main() {
 		panic(err)
 	}
 
-	firebaseApp, err := firebase.NewApp(context.Background(), nil)
+	var firebaseConfig *firebase.Config
+	if projectID := os.Getenv("PROJECT_ID"); projectID != "" {
+		firebaseConfig = &firebase.Config{ProjectID: projectID}
+	}
+
+	firebaseApp, err := firebase.NewApp(context.Background(), firebaseConfig)
 	if err != nil {
 		logger.Fatal("An error occurred when initializing firebase app", zap.Error(err))
 	}
@@ -80,13 +85,13 @@ func main() {
 	signal.Notify(c, os.Interrupt)
 	go func() {
 		<-c
-		logger.Info("shutting down server")
+		logger.Info("OS Interrupt caught, shutting down")
 		grpcServer.GracefulStop()
 		_ = srv.Close()
 	}()
 
-	logger.Info("starting grpcServer")
+	logger.Info("Starting the FCM Companion")
 	if err = srv.ListenAndServe(); err != nil {
-		logger.Info("grpcServer exit", zap.Error(err))
+		logger.Info("Exiting the FCM Companion", zap.Error(err))
 	}
 }
