@@ -12,14 +12,20 @@ import (
 	"os/signal"
 )
 
+// GRPCServer is any structure that implements the Register method
+// for grpc server registration.
 type GRPCServer interface {
 	Register(server *grpc.Server)
 }
 
+// GRPCGateway is any structure that implements the RegisterGateway method
+// which registers a new gateway to the http mux.
 type GRPCGateway interface {
 	RegisterGateway(ctx context.Context, mux *runtime.ServeMux, bind string, opts []grpc.DialOption) error
 }
 
+// Serve creates a new multiplexer and serves the traffic. It also waits for
+// the interrupt signal to kill the server when needed.
 func Serve(lis net.Listener, logger *zap.Logger, handlers ...multiplexer.Handler) {
 	handler := multiplexer.Make(nil,
 		handlers...,

@@ -6,6 +6,7 @@ import (
 	"go.uber.org/zap"
 )
 
+// New returns a new Service with configured firebase services
 func New(ctx context.Context, projectID string, logger *zap.Logger) (*Service, error) {
 	var firebaseConfig *firebase.Config
 	if projectID != "" {

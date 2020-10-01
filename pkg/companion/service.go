@@ -15,6 +15,7 @@ const (
 	instancesCollection = "fcm-companion-instances"
 )
 
+// Service is the implementation of the Notification API
 type Service struct {
 	v1.UnimplementedNotificationServiceServer
 	*zap.Logger
@@ -27,10 +28,12 @@ type Service struct {
 	CollectionPrefix string
 }
 
+// Register registers this service to the provided grpc server
 func (s *Service) Register(server *grpc.Server) {
 	v1.RegisterNotificationServiceServer(server, s)
 }
 
+// RegisterGateway registers this service to the provided http mux
 func (s *Service) RegisterGateway(ctx context.Context, mux *runtime.ServeMux, bind string, opts []grpc.DialOption) error {
 	return v1.RegisterNotificationServiceHandlerFromEndpoint(ctx, mux, bind, opts)
 }
