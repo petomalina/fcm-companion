@@ -5,7 +5,6 @@ import (
 	"github.com/blendle/zapdriver"
 	"github.com/petomalina/fcm-companion/pkg/companion"
 	"github.com/petomalina/fcm-companion/pkg/serverutil"
-	"github.com/petomalina/xrpc/pkg/multiplexer"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 	"os"
@@ -34,11 +33,8 @@ func main() {
 		serverutil.WithContext(ctx),
 		serverutil.WithPort(os.Getenv("PORT")),
 		serverutil.WithServices(svc),
-		serverutil.WithHandlers(
-			multiplexer.GRPCHandler,
-			multiplexer.PubSubHandler,
-			multiplexer.HTTPHandler,
-		),
+		serverutil.WithGRPC(),
+		serverutil.WithPubSub(),
 	); err != nil {
 		logger.Fatal("Serving crashed", zap.Error(err))
 	}

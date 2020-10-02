@@ -2,7 +2,6 @@ package serverutil
 
 import (
 	"context"
-	"github.com/petomalina/xrpc/pkg/multiplexer"
 )
 
 // ServeContext encapsulates services and hooks for the Serve
@@ -13,9 +12,9 @@ type ServeContext struct {
 	// services can be GRPCServer or GRPCGateway (or both)
 	services []interface{}
 
-	// handlerFactories are handlers that should be created for
-	// the services
-	handlerFactories []multiplexer.HandlerFactory
+	grpcEnabled    bool
+	gatewayEnabled bool
+	pubsubEnabled  bool
 
 	onListen func()
 	onExit   func()
@@ -47,11 +46,26 @@ func WithServices(s ...interface{}) ServeContextOption {
 	}
 }
 
-// WithHandlers adds new HandlerFactories. Serve and Serve apply all factories
-// to all services that are eligible for that.
-func WithHandlers(h ...multiplexer.HandlerFactory) ServeContextOption {
+// WithGRPC enables GRPC capabilities of the server
+func WithGRPC() ServeContextOption {
 	return func(c *ServeContext) {
-		c.handlerFactories = append(c.handlerFactories, h...)
+		c.grpcEnabled = true
+	}
+}
+
+// WithGRPCGateway enables gateway capabilities of the server
+func WithGRPCGateway() ServeContextOption {
+	return func(c *ServeContext) {
+		c.gatewayEnabled = true
+	}
+}
+
+// WithPubSub enables PubSub capabilities of the server. Enabling PubSub
+// also enables the gateway option
+func WithPubSub() ServeContextOption {
+	return func(c *ServeContext) {
+		c.pubsubEnabled = true
+		c.gatewayEnabled = true
 	}
 }
 

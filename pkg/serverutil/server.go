@@ -25,7 +25,6 @@ type GRPCGateway interface {
 
 func Serve(opts ...ServeContextOption) error {
 	ctx := &ServeContext{}
-
 	for _, o := range opts {
 		o(ctx)
 	}
@@ -41,16 +40,44 @@ func Serve(opts ...ServeContextOption) error {
 		ctx.onListen()
 	}
 
-	// create and register the grpc server
-	grpcServer, gwmux, err := MakeGRPCServerWithGateway(ctx.ctx, bind, ctx.services...)
-	if err != nil {
-		return err
+	var grpcServer *grpc.Server
+	var gateway *runtime.ServeMux
+	var handlers []multiplexer.Handler
+
+	if ctx.grpcEnabled {
+		grpcServer = grpc.NewServer()
+		handlers = append(handlers, multiplexer.GRPCHandler(grpcServer))
+	}
+
+	if ctx.pubsubEnabled || ctx.gatewayEnabled {
+		gateway = runtime.NewServeMux()
+	}
+
+	// pubsub must be registered before the gateway
+	if ctx.pubsubEnabled {
+		handlers = append(handlers, multiplexer.PubSubHandler(gateway))
+	}
+
+	if ctx.gatewayEnabled {
+		handlers = append(handlers, multiplexer.HTTPHandler(grpcServer))
+	}
+
+	// register all services provided by the user
+	for _, svc := range ctx.services {
+		if s, ok := svc.(GRPCServer); ok {
+			s.Register(grpcServer)
+		}
+
+		if s, ok := svc.(GRPCGateway); ok {
+			err := s.RegisterGateway(ctx.ctx, gateway, bind, []grpc.DialOption{grpc.WithInsecure()})
+			if err != nil {
+				return err
+			}
+		}
 	}
 
 	handler := multiplexer.Make(nil,
-		multiplexer.GRPCHandler(grpcServer),
-		multiplexer.PubSubHandler(gwmux),
-		multiplexer.HTTPHandler(gwmux),
+		handlers...,
 	)
 	srv := http.Server{Handler: handler}
 
@@ -74,7 +101,7 @@ func Serve(opts ...ServeContextOption) error {
 	return err
 }
 
-func MakeGRPCServerWithGateway(ctx context.Context, bind string, services ...interface{}) (*grpc.Server, *runtime.ServeMux, error) {
+func makeGRPCServerWithGateway(ctx context.Context, bind string, services ...interface{}) (*grpc.Server, *runtime.ServeMux, error) {
 	grpcServer := grpc.NewServer()
 	gwmux := runtime.NewServeMux()
 
