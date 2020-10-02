@@ -155,6 +155,10 @@ github.com/petomalina/xrpc v0.0.0-20200930124919-42e94f36cba5 h1:0sQN7TJbEyHGpHG
 github.com/petomalina/xrpc v0.0.0-20200930124919-42e94f36cba5/go.mod h1:It5q5tpo870uRCDYIX+lo///NLuBRMpXU+5EWQDPzPo=
 github.com/petomalina/xrpc v1.1.0 h1:oTKDdcK9M5uO0jELqxpm6X7si9ElCwL2UpbwxGQLiXg=
 github.com/petomalina/xrpc v1.1.0/go.mod h1:It5q5tpo870uRCDYIX+lo///NLuBRMpXU+5EWQDPzPo=
+github.com/petomalina/xrpc v1.1.1-0.20201002085136-cca2b6096391 h1:vziIHBPc2KrBh/Up8vAQ9mkBhu7bMTNtFjqRLDETNfA=
+github.com/petomalina/xrpc v1.1.1-0.20201002085136-cca2b6096391/go.mod h1:It5q5tpo870uRCDYIX+lo///NLuBRMpXU+5EWQDPzPo=
+github.com/petomalina/xrpc v1.2.1-0.20201002091154-c8dfef92b56b h1:DGy/vL7y6jHH+vQxyKb4UdlrtnEw3/jhJ3bePt63HU4=
+github.com/petomalina/xrpc v1.2.1-0.20201002091154-c8dfef92b56b/go.mod h1:It5q5tpo870uRCDYIX+lo///NLuBRMpXU+5EWQDPzPo=
 github.com/pkg/errors v0.8.1/go.mod h1:bwawxfHBFNV+L2hUp1rHADufV3IMtnDRdf1r5NINEl0=
 github.com/pkg/sftp v1.10.1/go.mod h1:lYOWFsE0bwd1+KfKJaKeuokY15vzFx25BLbzYYoAxZI=
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
@@ -371,6 +375,8 @@ golang.org/x/tools v0.0.0-20200804011535-6c149bb5ef0d/go.mod h1:njjCfa9FT2d7l9Bc
 golang.org/x/tools v0.0.0-20200825202427-b303f430e36d/go.mod h1:njjCfa9FT2d7l9Bc6FUM5FLjQPp3cFF28FI3qnDFljA=
 golang.org/x/tools v0.0.0-20200904185747-39188db58858 h1:xLt+iB5ksWcZVxqc+g9K41ZHy+6MKWfXCDsjSThnsPA=
 golang.org/x/tools v0.0.0-20200904185747-39188db58858/go.mod h1:Cj7w3i3Rnn0Xh82ur9kSqwfTHTeVxaDqrfMjpcNT6bE=
+golang.org/x/tools v0.0.0-20201002055958-0d28ed0cbe40 h1:ErPN1Z9An7dXc56pRUCKgWJkjYzc3hE+y15ky9E8qxU=
+golang.org/x/tools v0.0.0-20201002055958-0d28ed0cbe40/go.mod h1:z6u4i615ZeAfBE4XtMziQW1fSVJXACjjbWkB/mvPzlU=
 golang.org/x/xerrors v0.0.0-20190717185122-a985d3407aa7/go.mod h1:I/5z698sn9Ka8TeJc9MKroUUfqBBauWjQqLJ2OPfmY0=
 golang.org/x/xerrors v0.0.0-20191011141410-1b5146add898/go.mod h1:I/5z698sn9Ka8TeJc9MKroUUfqBBauWjQqLJ2OPfmY0=
 golang.org/x/xerrors v0.0.0-20191204190536-9bdfabe68543 h1:E7g+9GITq07hpfrRu66IVDexMakfv52eLZ2CXBWiKr4=

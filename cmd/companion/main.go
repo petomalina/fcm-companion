@@ -5,6 +5,7 @@ import (
 	"github.com/blendle/zapdriver"
 	"github.com/petomalina/fcm-companion/pkg/companion"
 	"github.com/petomalina/fcm-companion/pkg/serverutil"
+	"github.com/petomalina/xrpc/pkg/multiplexer"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 	"os"
@@ -28,7 +29,17 @@ func main() {
 		logger.Fatal("Cannot initialize companion", zap.Error(err))
 	}
 
-	if err := serverutil.ServeAll(ctx, logger, svc); err != nil {
+	logger.Info("Starting the server")
+	if err := serverutil.Serve(
+		serverutil.WithContext(ctx),
+		serverutil.WithPort(os.Getenv("PORT")),
+		serverutil.WithServices(svc),
+		serverutil.WithHandlers(
+			multiplexer.GRPCHandler,
+			multiplexer.PubSubHandler,
+			multiplexer.HTTPHandler,
+		),
+	); err != nil {
 		logger.Fatal("Serving crashed", zap.Error(err))
 	}
 }

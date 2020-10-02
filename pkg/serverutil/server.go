@@ -4,7 +4,6 @@ import (
 	"context"
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"github.com/petomalina/xrpc/pkg/multiplexer"
-	"go.uber.org/zap"
 	"google.golang.org/grpc"
 	"net"
 	"net/http"
@@ -24,11 +23,34 @@ type GRPCGateway interface {
 	RegisterGateway(ctx context.Context, mux *runtime.ServeMux, bind string, opts []grpc.DialOption) error
 }
 
-// Serve creates a new multiplexer and serves the traffic. It also waits for
-// the interrupt signal to kill the server when needed.
-func Serve(lis net.Listener, logger *zap.Logger, handlers ...multiplexer.Handler) {
+func Serve(opts ...ServeContextOption) error {
+	ctx := &ServeContext{}
+
+	for _, o := range opts {
+		o(ctx)
+	}
+
+	lis, err := net.Listen("tcp", ":"+ctx.port)
+	if err != nil {
+		return err
+	}
+	// get the correct bind if the getenv returned an empty string
+	bind := lis.Addr().(*net.TCPAddr).String()
+
+	if ctx.onListen != nil {
+		ctx.onListen()
+	}
+
+	// create and register the grpc server
+	grpcServer, gwmux, err := MakeGRPCServerWithGateway(ctx.ctx, bind, ctx.services...)
+	if err != nil {
+		return err
+	}
+
 	handler := multiplexer.Make(nil,
-		handlers...,
+		multiplexer.GRPCHandler(grpcServer),
+		multiplexer.PubSubHandler(gwmux),
+		multiplexer.HTTPHandler(gwmux),
 	)
 	srv := http.Server{Handler: handler}
 
@@ -36,39 +58,20 @@ func Serve(lis net.Listener, logger *zap.Logger, handlers ...multiplexer.Handler
 	signal.Notify(c, os.Interrupt)
 	go func() {
 		<-c
-		logger.Info("OS Interrupt caught, shutting down")
 		_ = srv.Close()
 	}()
 
-	logger.Info("Starting the FCM Companion")
-	if err := srv.Serve(lis); err != nil {
-		logger.Info("Exiting the FCM Companion", zap.Error(err))
-	}
-}
+	err = srv.Serve(lis)
 
-func ServeAll(ctx context.Context, logger *zap.Logger, services ...interface{}) error {
-	lis, err := net.Listen("tcp", ":"+os.Getenv("PORT"))
-	if err != nil {
-		return err
-	}
-	// get the correct bind if the getenv returned an empty string
-	bind := lis.Addr().(*net.TCPAddr).String()
-
-	// create and register the grpc server
-	grpcServer, gwmux, err := MakeGRPCServerWithGateway(ctx, bind, services...)
-	if err != nil {
-		return err
+	if ctx.onExit != nil {
+		ctx.onExit()
 	}
 
-	Serve(
-		lis,
-		logger,
-		multiplexer.GRPCHandler(grpcServer),
-		multiplexer.PubSubHandler(gwmux),
-		multiplexer.HTTPHandler(gwmux),
-	)
+	if err == http.ErrServerClosed {
+		return nil
+	}
 
-	return nil
+	return err
 }
 
 func MakeGRPCServerWithGateway(ctx context.Context, bind string, services ...interface{}) (*grpc.Server, *runtime.ServeMux, error) {
