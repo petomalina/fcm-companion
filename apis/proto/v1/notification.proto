@@ -5,6 +5,8 @@ package fcmcompanion.v1;
 option go_package = "github.com/petomalina/fcm-companion/apis/go-sdk/notification/v1";
 
 import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/struct.proto";
 import "google/protobuf/any.proto";
 import "google/api/annotations.proto";
 import "validate/validate.proto";
@@ -168,7 +170,7 @@ message Notification {
   // see https://pkg.go.dev/firebase.google.com/go/messaging#Message
   // this object is already populated from the template and corresponds to
   // what was sent to the FCM API
-  google.protobuf.Any message = 3;
+  FCMMessage message = 3;
 }
 
 /* ----- Region for Configuration ----- */
@@ -176,17 +178,213 @@ message Notification {
 // NotificationConfig is the object of a configuration file parsed from the
 // remote config. It contains all message templates
 message NotificationConfig {
+  // @inject_tag: firestore:"messages,omitempty"
   repeated MessageTemplate messages = 1;
 }
 
 message MessageTemplate {
   // id is a unique key under which the template is referenced
   // this field is other referenced as 'instance_id'
+  // @inject_tag: firestore:"id,omitempty"
   string id = 1;
 
   // message is the object containing the configuration of an FCM message
   // see https://pkg.go.dev/firebase.google.com/go/messaging#Message
   // this object will be parsed from the configuration file directly into the
   // FCM message specification
-  google.protobuf.Any message = 2;
+  // @inject_tag: firestore:"message,omitempty"
+  map<string, google.protobuf.Any> message = 2;
+}
+
+/* ----- Region for FCM Notification Config ----- */
+
+message FCMMessage {
+  // @inject_tag: firestore:"data,omitempty"
+  map<string, string> data = 1;
+
+  // @inject_tag: firestore:"notification,omitempty"
+  FCMNotification notification = 2;
+
+  // @inject_tag: firestore:"android,omitempty"
+  FCMAndroid android = 3;
+
+  // @inject_tag: firestore:"webpush,omitempty"
+  FCMWebpush webpush = 4;
+
+  // @inject_tag: firestore:"apns,omitempty"
+  FCMAPNSConfig apns = 5;
+
+  // @inject_tag: firestore:"fcm_options,omitempty"
+  FCMOptions fcm_options = 6;
+
+  // @inject_tag: firestore:"token,omitempty"
+  string token = 7;
+
+  // @inject_tag: firestore:"topic,omitempty"
+  string topic = 8;
+
+  // @inject_tag: firestore:"condition,omitempty"
+  string condition = 9;
+}
+
+message FCMNotification {
+  // @inject_tag: firestore:"title,omitempty"
+  string title = 1;
+
+  // @inject_tag: firestore:"body,omitempty"
+  string body = 2;
+
+  // @inject_tag: firestore:"imageURL,omitempty"
+  string image_url = 3;
+}
+
+// see https://pkg.go.dev/firebase.google.com/go/messaging#AndroidConfig
+message FCMAndroid {
+  // @inject_tag: firestore:"collapse_key,omitempty"
+  string collapse_key = 1;
+
+  // @inject_tag: firestore:"priority,omitempty"
+  string priority = 2;
+
+  // @inject_tag: firestore:"ttl,omitempty" json:"-"
+  google.protobuf.Timestamp ttl = 3;
+
+  // @inject_tag: firestore:"restricted_package_name,omitempty"
+  string restricted_package_name = 4;
+
+  // @inject_tag: firestore:"data,omitempty"
+  map<string, string> data = 5;
+
+  // @inject_tag: firestore:"notification,omitempty"
+  FCMAndroidNotification notification = 6;
+
+  // @inject_tag: firestore:"fcm_options,omitempty" json:"fcm_options,omitempty"
+  FCMAndroidOptions fcm_options = 7;
+}
+
+// see https://pkg.go.dev/firebase.google.com/go/messaging#AndroidNotification
+message FCMAndroidNotification {
+  // @inject_tag: firestore"title,omitempty"
+  string title = 1;
+
+  // @inject_tag: firestore"body,omitempty"
+  string body = 2;
+
+  // @inject_tag: firestore"icon,omitempty"
+  string icon = 3;
+
+  // @inject_tag: firestore"color,omitempty"
+  string color = 4;
+
+  // @inject_tag: firestore"sound,omitempty"
+  string sound = 5;
+
+  // @inject_tag: firestore"tag,omitempty"
+  string tag = 6;
+
+  // @inject_tag: firestore"click_action,omitempty"
+  string click_action = 7;
+
+  // @inject_tag: firestore"body_loc_key,omitempty"
+  string body_loc_key = 8;
+
+  // @inject_tag: firestore"body_loc_args,omitempty"
+  repeated string body_loc_args = 9;
+
+  // @inject_tag: firestore"title_loc_key,omitempty"
+  string title_loc_key = 10;
+
+  // @inject_tag: firestore"title_loc_args,omitempty"
+  repeated string title_loc_args = 11;
+
+  // @inject_tag: firestore"channel_id,omitempty"
+  string channel_id = 12;
+
+  // @inject_tag: firestore:"image,omitempty" json:"image,omitempty"
+  string image_url = 13;
+}
+
+// see https://pkg.go.dev/firebase.google.com/go/messaging#AndroidFCMOptions
+message FCMAndroidOptions {
+  // @inject_tag: firestore:"analyticsLabel,omitempty"
+  string analytics_label = 1;
+}
+
+// see https://pkg.go.dev/firebase.google.com/go/messaging#WebpushConfig
+message FCMWebpush {
+  // @inject_tag: firestore"headers,omitempty"
+  map<string, string> headers = 1;
+
+  // @inject_tag: firestore"data,omitempty"
+  map<string, string> data = 2;
+
+  // @inject_tag: firestore"notification,omitempty"
+  FCMWebpushNotification notification = 3;
+
+  // @inject_tag: firestore"fcm_options,omitempty" json:"fcm_options,omitempty"
+  FCMWebpushOptions fcm_options = 4;
+}
+
+// see https://pkg.go.dev/firebase.google.com/go/messaging#WebpushNotification
+message FCMWebpushNotification {
+  repeated FCMWebpushNotificationAction actions = 1;
+
+  string title = 2;
+
+  string body = 3;
+
+  string icon = 4;
+
+  string badge = 5;
+
+  string direction = 6;
+
+  google.protobuf.Any data = 7;
+
+  string image = 8;
+
+  string language = 9;
+
+  bool renotify = 10;
+
+  bool require_interaction = 11;
+
+  bool silent = 12;
+
+  string tag = 13;
+
+  // this should be *int64
+  int64 timestamp_millis = 14;
+
+  repeated int64 vibrate = 15;
+
+  map<string, google.protobuf.Any> custom_data = 16;
+}
+
+// see https://pkg.go.dev/firebase.google.com/go/messaging#WebpushNotificationAction
+message FCMWebpushNotificationAction {
+  // @inject_tag: firestore"action,omitempty"
+  string action = 1;
+
+  // @inject_tag: firestore"title,omitempty"
+  string title = 2;
+
+  // @inject_tag: firestore"icon,omitempty"
+  string icon = 3;
+}
+
+// see https://pkg.go.dev/firebase.google.com/go/messaging#WebpushFcmOptions
+message FCMWebpushOptions {
+  // @inject_tag: firestore"link,omitempty"
+  string link = 1;
+}
+
+// see https://pkg.go.dev/firebase.google.com/go/messaging#APNSConfig
+message FCMAPNSConfig {
+
+}
+
+message FCMOptions {
+  // @inject_tag: firestore:"analytics_label,omitempty"
+  string analytics_label = 1;
 }

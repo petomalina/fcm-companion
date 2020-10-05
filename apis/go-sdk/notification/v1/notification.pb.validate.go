@@ -973,14 +973,21 @@ func (m *MessageTemplate) Validate() error {
 
 	// no validation rules for Id
 
-	if v, ok := interface{}(m.GetMessage()).(interface{ Validate() error }); ok {
-		if err := v.Validate(); err != nil {
-			return MessageTemplateValidationError{
-				field:  "Message",
-				reason: "embedded message failed validation",
-				cause:  err,
+	for key, val := range m.GetMessage() {
+		_ = val
+
+		// no validation rules for Message[key]
+
+		if v, ok := interface{}(val).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return MessageTemplateValidationError{
+					field:  fmt.Sprintf("Message[%v]", key),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
 			}
 		}
+
 	}
 
 	return nil
@@ -1039,3 +1046,648 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = MessageTemplateValidationError{}
+
+// Validate checks the field values on FCMMessage with the rules defined in the
+// proto definition for this message. If any rules are violated, an error is returned.
+func (m *FCMMessage) Validate() error {
+	if m == nil {
+		return nil
+	}
+
+	// no validation rules for Data
+
+	if v, ok := interface{}(m.GetNotification()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return FCMMessageValidationError{
+				field:  "Notification",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if v, ok := interface{}(m.GetAndroid()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return FCMMessageValidationError{
+				field:  "Android",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if v, ok := interface{}(m.GetWebpush()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return FCMMessageValidationError{
+				field:  "Webpush",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if v, ok := interface{}(m.GetApns()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return FCMMessageValidationError{
+				field:  "Apns",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if v, ok := interface{}(m.GetFcmOptions()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return FCMMessageValidationError{
+				field:  "FcmOptions",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	// no validation rules for Token
+
+	// no validation rules for Topic
+
+	// no validation rules for Condition
+
+	return nil
+}
+
+// FCMMessageValidationError is the validation error returned by
+// FCMMessage.Validate if the designated constraints aren't met.
+type FCMMessageValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e FCMMessageValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e FCMMessageValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e FCMMessageValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e FCMMessageValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e FCMMessageValidationError) ErrorName() string { return "FCMMessageValidationError" }
+
+// Error satisfies the builtin error interface
+func (e FCMMessageValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sFCMMessage.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = FCMMessageValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = FCMMessageValidationError{}
+
+// Validate checks the field values on FCMNotification with the rules defined
+// in the proto definition for this message. If any rules are violated, an
+// error is returned.
+func (m *FCMNotification) Validate() error {
+	if m == nil {
+		return nil
+	}
+
+	// no validation rules for Title
+
+	// no validation rules for Body
+
+	// no validation rules for ImageUrl
+
+	return nil
+}
+
+// FCMNotificationValidationError is the validation error returned by
+// FCMNotification.Validate if the designated constraints aren't met.
+type FCMNotificationValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e FCMNotificationValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e FCMNotificationValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e FCMNotificationValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e FCMNotificationValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e FCMNotificationValidationError) ErrorName() string { return "FCMNotificationValidationError" }
+
+// Error satisfies the builtin error interface
+func (e FCMNotificationValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sFCMNotification.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = FCMNotificationValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = FCMNotificationValidationError{}
+
+// Validate checks the field values on FCMAndroid with the rules defined in the
+// proto definition for this message. If any rules are violated, an error is returned.
+func (m *FCMAndroid) Validate() error {
+	if m == nil {
+		return nil
+	}
+
+	// no validation rules for CollapseKey
+
+	// no validation rules for Priority
+
+	if v, ok := interface{}(m.GetTtl()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return FCMAndroidValidationError{
+				field:  "Ttl",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	// no validation rules for RestrictedPackageName
+
+	// no validation rules for Data
+
+	if v, ok := interface{}(m.GetNotification()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return FCMAndroidValidationError{
+				field:  "Notification",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if v, ok := interface{}(m.GetFcmOptions()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return FCMAndroidValidationError{
+				field:  "FcmOptions",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	return nil
+}
+
+// FCMAndroidValidationError is the validation error returned by
+// FCMAndroid.Validate if the designated constraints aren't met.
+type FCMAndroidValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e FCMAndroidValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e FCMAndroidValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e FCMAndroidValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e FCMAndroidValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e FCMAndroidValidationError) ErrorName() string { return "FCMAndroidValidationError" }
+
+// Error satisfies the builtin error interface
+func (e FCMAndroidValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sFCMAndroid.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = FCMAndroidValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = FCMAndroidValidationError{}
+
+// Validate checks the field values on FCMAndroidNotification with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, an error is returned.
+func (m *FCMAndroidNotification) Validate() error {
+	if m == nil {
+		return nil
+	}
+
+	// no validation rules for Title
+
+	// no validation rules for Body
+
+	// no validation rules for Icon
+
+	// no validation rules for Color
+
+	// no validation rules for Sound
+
+	// no validation rules for Tag
+
+	// no validation rules for ClickAction
+
+	// no validation rules for BodyLocKey
+
+	// no validation rules for TitleLocKey
+
+	// no validation rules for ChannelId
+
+	// no validation rules for ImageUrl
+
+	return nil
+}
+
+// FCMAndroidNotificationValidationError is the validation error returned by
+// FCMAndroidNotification.Validate if the designated constraints aren't met.
+type FCMAndroidNotificationValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e FCMAndroidNotificationValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e FCMAndroidNotificationValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e FCMAndroidNotificationValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e FCMAndroidNotificationValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e FCMAndroidNotificationValidationError) ErrorName() string {
+	return "FCMAndroidNotificationValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e FCMAndroidNotificationValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sFCMAndroidNotification.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = FCMAndroidNotificationValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = FCMAndroidNotificationValidationError{}
+
+// Validate checks the field values on FCMAndroidOptions with the rules defined
+// in the proto definition for this message. If any rules are violated, an
+// error is returned.
+func (m *FCMAndroidOptions) Validate() error {
+	if m == nil {
+		return nil
+	}
+
+	// no validation rules for AnalyticsLabel
+
+	return nil
+}
+
+// FCMAndroidOptionsValidationError is the validation error returned by
+// FCMAndroidOptions.Validate if the designated constraints aren't met.
+type FCMAndroidOptionsValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e FCMAndroidOptionsValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e FCMAndroidOptionsValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e FCMAndroidOptionsValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e FCMAndroidOptionsValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e FCMAndroidOptionsValidationError) ErrorName() string {
+	return "FCMAndroidOptionsValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e FCMAndroidOptionsValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sFCMAndroidOptions.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = FCMAndroidOptionsValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = FCMAndroidOptionsValidationError{}
+
+// Validate checks the field values on FCMWebpush with the rules defined in the
+// proto definition for this message. If any rules are violated, an error is returned.
+func (m *FCMWebpush) Validate() error {
+	if m == nil {
+		return nil
+	}
+
+	return nil
+}
+
+// FCMWebpushValidationError is the validation error returned by
+// FCMWebpush.Validate if the designated constraints aren't met.
+type FCMWebpushValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e FCMWebpushValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e FCMWebpushValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e FCMWebpushValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e FCMWebpushValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e FCMWebpushValidationError) ErrorName() string { return "FCMWebpushValidationError" }
+
+// Error satisfies the builtin error interface
+func (e FCMWebpushValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sFCMWebpush.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = FCMWebpushValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = FCMWebpushValidationError{}
+
+// Validate checks the field values on FCMAPNS with the rules defined in the
+// proto definition for this message. If any rules are violated, an error is returned.
+func (m *FCMAPNS) Validate() error {
+	if m == nil {
+		return nil
+	}
+
+	return nil
+}
+
+// FCMAPNSValidationError is the validation error returned by FCMAPNS.Validate
+// if the designated constraints aren't met.
+type FCMAPNSValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e FCMAPNSValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e FCMAPNSValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e FCMAPNSValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e FCMAPNSValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e FCMAPNSValidationError) ErrorName() string { return "FCMAPNSValidationError" }
+
+// Error satisfies the builtin error interface
+func (e FCMAPNSValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sFCMAPNS.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = FCMAPNSValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = FCMAPNSValidationError{}
+
+// Validate checks the field values on FCMOptions with the rules defined in the
+// proto definition for this message. If any rules are violated, an error is returned.
+func (m *FCMOptions) Validate() error {
+	if m == nil {
+		return nil
+	}
+
+	return nil
+}
+
+// FCMOptionsValidationError is the validation error returned by
+// FCMOptions.Validate if the designated constraints aren't met.
+type FCMOptionsValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e FCMOptionsValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e FCMOptionsValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e FCMOptionsValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e FCMOptionsValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e FCMOptionsValidationError) ErrorName() string { return "FCMOptionsValidationError" }
+
+// Error satisfies the builtin error interface
+func (e FCMOptionsValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sFCMOptions.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = FCMOptionsValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = FCMOptionsValidationError{}

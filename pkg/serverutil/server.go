@@ -100,23 +100,3 @@ func Serve(opts ...ServeContextOption) error {
 
 	return err
 }
-
-func makeGRPCServerWithGateway(ctx context.Context, bind string, services ...interface{}) (*grpc.Server, *runtime.ServeMux, error) {
-	grpcServer := grpc.NewServer()
-	gwmux := runtime.NewServeMux()
-
-	for _, svc := range services {
-		if s, ok := svc.(GRPCServer); ok {
-			s.Register(grpcServer)
-		}
-
-		if s, ok := svc.(GRPCGateway); ok {
-			err := s.RegisterGateway(ctx, gwmux, bind, []grpc.DialOption{grpc.WithInsecure()})
-			if err != nil {
-				return nil, nil, err
-			}
-		}
-	}
-
-	return grpcServer, gwmux, nil
-}

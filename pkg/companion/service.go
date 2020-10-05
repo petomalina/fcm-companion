@@ -26,6 +26,10 @@ type Service struct {
 	// CollectionPrefix is used to define Firestore collection prefixes.
 	// This is useful when there would be conflict with already existing collections
 	CollectionPrefix string
+
+	// config is the current configuration of the service. It's never null unless the
+	// service is called without the New() initializer
+	config *v1.NotificationConfig
 }
 
 // Register registers this service to the provided grpc server

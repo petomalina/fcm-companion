@@ -23,7 +23,7 @@ func main() {
 		panic(err)
 	}
 
-	svc, err := companion.New(ctx, os.Getenv("PROJECT_ID"), logger)
+	svc, err := companion.New(ctx, os.Getenv("PROJECT_ID"), logger, "")
 	if err != nil {
 		logger.Fatal("Cannot initialize companion", zap.Error(err))
 	}
